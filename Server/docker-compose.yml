@@ -1,0 +1,39 @@
+version: "3.9"
+   
+services:
+  app:
+    container_name: app
+    build:
+      context: ./
+      dockerfile: ./configuration/app/app.dockerfile
+    tty: true
+    volumes:
+      - ./volumes:/home/redundant/django
+    depends_on:
+      - db
+    expose:
+      - 8000
+  web:
+    container_name: web
+    build:
+      context: ./
+      dockerfile: ./configuration/web/web.dockerfile
+    volumes:
+      - ./configuration/web/conf.d:/etc/nginx/conf.d
+      - ./volumes:/django
+    ports:
+      - 80:80
+      - 443:443
+    links:
+      - db
+    expose:
+      - 8000
+  db:
+    container_name: pg
+    image: postgres:12.4-alpine
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
