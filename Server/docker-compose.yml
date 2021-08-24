@@ -3,9 +3,7 @@ version: "3.9"
 services:
   app:
     container_name: app
-    build:
-      context: ./
-      dockerfile: ./configuration/app/app.dockerfile
+    image: app:1.0
     tty: true
     volumes:
       - ./volumes:/home/redundant/django
@@ -15,9 +13,7 @@ services:
       - 8000
   web:
     container_name: web
-    build:
-      context: ./
-      dockerfile: ./configuration/web/web.dockerfile
+    image: web:1.0
     volumes:
       - ./configuration/web/conf.d:/etc/nginx/conf.d
       - ./volumes:/django
