@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../Utils/Api.dart';
+import '../../Models/Music.dart';
+import '../../DB/Music.dart';
 class MusicPage extends StatefulWidget {
   @override
   _MusicPageState createState() => _MusicPageState();
@@ -7,6 +10,7 @@ class MusicPage extends StatefulWidget {
 
 class _MusicPageState extends State<MusicPage> {
   TextEditingController _textEditingController = TextEditingController(text: '');
+  List<Music>? musicList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +33,29 @@ class _MusicPageState extends State<MusicPage> {
                 )
               ),
               onEditingComplete: () {
-                print(_textEditingController.text);
+                setState(() {
+                  musicList = apiRequest(_textEditingController.text);
+                });
+              },
+            ),
+          ),
+
+          Expanded(
+            child: ListView.separated(
+              shrinkWrap: true,
+              separatorBuilder: (context, index) => Divider(color: Colors.black),
+              itemCount: musicList!.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(musicList![index].name!),
+                  subtitle: Text(musicList![index].artist!),
+                  trailing: IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () {
+                      musicInsert(musicList![index]);
+                    },
+                  ),
+                );
               },
             )
           )

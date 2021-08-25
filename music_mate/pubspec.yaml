@@ -14,9 +14,11 @@ dependencies:
 
   # MIT
   sqflite: ^2.0.0+3
+  audioplayers: ^0.19.1
 
   # BSD
   encrypt: ^5.0.1
+  http: ^0.13.3
 
 dev_dependencies:
   flutter_test:

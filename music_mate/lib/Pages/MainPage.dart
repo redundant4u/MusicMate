@@ -26,7 +26,9 @@ class _MainPageState extends State<MainPage> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add, color: Colors.black, size: 30),
-            onPressed: () { _searchPage(); },
+            onPressed: () {
+              _searchPage();
+            },
           ),
         ],
       ),
@@ -56,6 +58,9 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _searchPage() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage() ));
+   // 목록 추가한 후 데이터 업데이트
+    Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage())).then((_) {
+      setState(() {});
+    });
   }
 }

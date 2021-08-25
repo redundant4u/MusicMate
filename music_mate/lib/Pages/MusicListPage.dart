@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 import '../Models/Music.dart';
 import '../DB/Music.dart';
@@ -9,6 +10,17 @@ class MusicListPage extends StatefulWidget {
 }
 
 class _MusicListPageState extends State<MusicListPage> {
+  AudioPlayer _player = AudioPlayer();
+
+  bool isPlaying = false;
+  int playMusicID = 0;
+
+  @override
+  void dispose() {
+    super.dispose();
+    _player.stop();
+  }
+  
   @override
   Widget build(BuildContext context) {
     List<Widget> _peopleList = _getPeopleList();
@@ -18,7 +30,7 @@ class _MusicListPageState extends State<MusicListPage> {
         Column(
           children: <Widget>[
             Container(
-              margin: const EdgeInsets.only(top: 10),
+              margin: const EdgeInsets.only(top: 10, bottom: 15),
               height: 60.0,
               child: ListView(
                 scrollDirection: Axis.horizontal,
@@ -28,7 +40,7 @@ class _MusicListPageState extends State<MusicListPage> {
           ],
         ),
 
-        Container(
+        Expanded(
           child: FutureBuilder<List<Music>>(
            future: getMusicList(),
             builder: (context, snapshot) {
@@ -40,6 +52,34 @@ class _MusicListPageState extends State<MusicListPage> {
                   itemBuilder: (context, index) {
                     return ListTile(
                       title: Text(snapshot.data![index].name!),
+                      subtitle: Text(snapshot.data![index].artist!),
+                      trailing: IconButton(
+                        icon: Icon(Icons.play_arrow),
+                        onPressed: () {
+                          int musicID = snapshot.data![index].id!;
+                          String url = snapshot.data![index].url!;
+                          
+                          if(url == 'null') {
+                            print('no music');
+                          }
+                          else if(isPlaying && playMusicID == musicID) {
+                            _player.stop();
+                            isPlaying = false;
+                            print('stop');
+                          }
+                          else if(isPlaying && playMusicID != musicID) {
+                            _player.play(url);
+                           playMusicID = musicID;
+                            print('another music');
+                          }
+                          else {
+                            _player.play(url);
+                            playMusicID = musicID;
+                            isPlaying = true;
+                            print('play');
+                          }
+                        }
+                      ),
                     );
                   },
                 );
@@ -50,7 +90,7 @@ class _MusicListPageState extends State<MusicListPage> {
               }
             }
           )
-        )
+        ),
       ]
     );
   }

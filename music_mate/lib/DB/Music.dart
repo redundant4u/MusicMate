@@ -17,8 +17,14 @@ Future<List<Music>> getMusicList() async {
   });
 }
 
-void insert(Music data) async {
+void musicInsert(Music data) async {
   final Database? _db = await DB.instance.database;
+  final List<Map<String, dynamic>> _maps = await _db!.rawQuery("SELECT name FROM music");
+
+  for(var i in _maps) {
+    if(i['name'] == data.name)
+      return;
+  }
 
   Music _music = Music(
     name  : data.name,
@@ -26,5 +32,5 @@ void insert(Music data) async {
     url   : data.url
   );
 
-  await _db!.insert('music', _music.toMap());
+  await _db.insert('music', _music.toMap());
 }
