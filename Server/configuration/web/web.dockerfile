@@ -107,4 +107,6 @@ EXPOSE 80
 
 STOPSIGNAL SIGTERM
 
+RUN apk add certbot certbot-nginx
+
 CMD ["nginx", "-g", "daemon off;"]
