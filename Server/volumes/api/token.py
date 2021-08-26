@@ -32,6 +32,3 @@ def isValid(token : str):
     except Exception as e:
         print(e)
         return False
-
-# print(getToken(3))
-updateToken('0b550bd9b7c04e57a7acdb0611c1d91e154493b66d3f04ebbd89143d2477d8e8')
