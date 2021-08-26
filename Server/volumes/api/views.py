@@ -4,13 +4,29 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import User
 from .serializers import SongSeriallizer
 from rest_framework.parsers import JSONParser
-
+from .serializers import UserSeriallizer
 
 # Create your views here.
 @csrf_exempt
 def idCheck(request):
     if request.method == 'GET':
         id = request.GET['id']
-        query_set = User.objects.all()
-        serializer = User(query_set, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        try:
+            query_set = User.objects.get(name=id)
+            result = dict()
+            result['statusCode'] = 200
+            result['status'] = 'Already Exist'
+            return JsonResponse(result, status = 200)
+        except User.DoesNotExist as e:
+            result = dict()
+            result['statusCode'] = 200
+            result['status'] = 'Allow'
+            return JsonResponse(result, status = 200)
+        except Exception as e:
+            result['statusCode'] = 404
+            result['status'] = 'Error'
+            return JsonResponse(result, status = 404)
+
+# @csrf_exempt
+# def searchUser(request):
+#     if request.method == ''
