@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../Utils/Api.dart';
 import '../../Models/Music.dart';
-import '../../DB/Music.dart';
 class MusicPage extends StatefulWidget {
   @override
   _MusicPageState createState() => _MusicPageState();
