@@ -4,18 +4,23 @@ import 'package:test/DB/Friend.dart';
 
 import '../Models/Music.dart';
 import '../Models/Friend.dart';
+import '../Utils/Api.dart';
 import '../DB/Music.dart';
 class MusicListPage extends StatefulWidget {
+  int tabPageID;
+
+  MusicListPage(this.tabPageID);
+
   @override
   _MusicListPageState createState() => _MusicListPageState();
 }
 
 class _MusicListPageState extends State<MusicListPage> {
   AudioPlayer _player = AudioPlayer();
+  List<Friend> _friendsList = [];
 
   bool isPlaying = false;
   int playMusicID = 0;
-  int tabPageID = 0;
 
   @override
   void dispose() {
@@ -60,7 +65,10 @@ class _MusicListPageState extends State<MusicListPage> {
                               )
                             ),
                             onTap: () {
-                              setState(() { tabPageID = index; });
+                              setState(() {
+                                widget.tabPageID = index;
+                                _friendsList = snapshot.data!;
+                              });
                             }
                           );
                         }
@@ -75,7 +83,7 @@ class _MusicListPageState extends State<MusicListPage> {
             ],
           ),
 
-          if(tabPageID == 0)
+          if(widget.tabPageID == 0)
             Expanded(
               child: FutureBuilder<List<Music>>(
                 future: getMusicList(),
@@ -148,8 +156,71 @@ class _MusicListPageState extends State<MusicListPage> {
                 }
               )
             ),
-          if(tabPageID != 0)
-            Text('HI')
+          if(widget.tabPageID != 0)
+            Expanded(
+              child: FutureBuilder<List<Music>>(
+                future: getFriendMusic(_friendsList[widget.tabPageID].name!),
+                builder: (context, snapshot) {
+                  if(snapshot.hasData) {
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      separatorBuilder: (context, index) => Divider(color: Colors.black),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(snapshot.data![index].name!),
+                          subtitle: Text(snapshot.data![index].artist!),
+                          trailing: Wrap(
+                            children: <Widget>[
+                              IconButton(
+                                icon: Icon(Icons.play_arrow),
+                                onPressed: () {
+                                  int musicID = snapshot.data![index].musicId!;
+                                  String url = snapshot.data![index].url!;
+                                  String msg = "";
+
+                                  print('url: ' + url);
+                          
+                                  if(url == 'empty')
+                                    msg = "미리듣기 음악이 없습니다!";
+                                  else if(isPlaying && playMusicID == musicID) {
+                                    _player.stop();
+                                    isPlaying = false;
+                                    msg = "듣기 취소";
+                                  }
+                                  else if(isPlaying && playMusicID != musicID) {
+                                    _player.play(url);
+                                    playMusicID = musicID;
+                                    msg = "${snapshot.data![index].name} 듣는 중...";
+                                  }
+                                  else {
+                                    _player.play(url);
+                                    playMusicID = musicID;
+                                    isPlaying = true;
+                                    msg = "${snapshot.data![index].name} 듣는 중...";
+                                  }
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(msg),
+                                      duration: const Duration(seconds: 1),
+                                    )
+                                  );
+                                }
+                              ),
+                            ]
+                          )
+                        );
+                      },
+                    );
+                  }
+
+                  else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                }
+              )
+            ),
         ]
       )
     );
