@@ -77,7 +77,7 @@ Future<bool> login(User user) async {
   Map<String, dynamic> _loginResponse = jsonDecode(_loginRequest.body);
 
   if(_loginResponse['statusCode'] == 200) {
-    userTokenUpdate(_loginResponse['userToken']);
+    await userTokenUpdate(_loginResponse['userToken']);
     return true;
   }
   else
@@ -135,7 +135,7 @@ Future<List<Friend>> searchUsers(String q) async {
   else if(_status == 401) {
     bool _updateToken = await login(_user);
     if(_updateToken)
-      searchUsers(q);
+      return await searchUsers(q);
   }
 
   return _friendsList;
@@ -196,4 +196,40 @@ Future<bool> insertMusicForServer(Music music) async {
   }
 
   return false;
+}
+
+Future<List<Music>> getFriendMusic(String name) async {
+  final User _user = await getUser();
+  List<Music> _friendMusicList = [];
+
+  final _getFriendRequest = await http.post(
+  Uri.parse(url + 'getMusicList'),
+    headers: {
+      "Content-Type": "apllication/json"
+    },
+    body: json.encode({
+      "userToken": _user.token,
+      "friendName": name
+    })
+  );
+  Map<String, dynamic> _getFriendResponse = jsonDecode(_getFriendRequest.body);
+
+  if(_getFriendResponse['statusCode'] == 200) {
+    for(var i in _getFriendResponse['items']) {
+      Music _music = Music(
+        musicId: i['musicID'],
+        name: i['musicName'],
+        artist: i['artist'],
+        url: i['musicPreview']
+      );
+      _friendMusicList.add(_music);
+    }
+  }
+
+  else if(_getFriendResponse['statusCode'] == 401) {
+    await login(_user);
+    return await getFriendMusic(name);
+  }
+  
+  return _friendMusicList;
 }

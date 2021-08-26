@@ -6,12 +6,10 @@ import '../Pages/SettingPage.dart';
 Widget showPage(int i) {
   Widget widget;
 
-  print(i);
-
   switch(i) {
-    case 0:  widget = MusicListPage(); break;
+    case 0:  widget = MusicListPage(0); break;
     case 1:  widget = SettingPage();   break;
-    default: widget = MusicListPage(); break;
+    default: widget = MusicListPage(0); break;
   }
 
   return widget;
