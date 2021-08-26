@@ -7,6 +7,9 @@ from .serializers import SongSeriallizer
 from rest_framework.parsers import JSONParser
 from .serializers import UserSeriallizer
 from .aescipher import AESCipher
+import base64
+import json
+import requests
 
 # Create your views here.
 @csrf_exempt
@@ -30,7 +33,7 @@ def idCheck(request):
             return JsonResponse(result, status = 404)
 
 @csrf_exempt
-def signup(request):
+def signUp(request):
     if request.method == 'POST':
         data = JSONParser().parse(request)
         cipher = AESCipher()
@@ -44,11 +47,6 @@ def signup(request):
         result['key'] = q.encryptKey
         result['token'] = token
         return JsonResponse(result, status = 404)
-
-# @csrf_exempt
-import base64
-import json
-import requests
 
 client_id = 'ee7b63f166a142a3b29f5f6c8095eb1d'
 client_secret = 'e83335f20e2e47e89d230ad1b7efe7bc'
@@ -68,10 +66,8 @@ def get_headers(client_id, client_secret):
     headers = {'Authorization' : 'Bearer {}'.format(access_token)}
     return headers
 
-# 테스트 페이지
-def test(request):
-    return render(request, 'api/test.html')
 
+# @csrf_exempt
 def searchMusic(request):
     # Spotify API 에서 검색 결과 받아오기
     endpoint = 'https://api.spotify.com/v1/search'
@@ -104,5 +100,4 @@ def searchMusic(request):
         'items': items
     }
 
-    #return JsonResponse(result,status=200)
-    return render(request,'api/result.html',{'result': result})
+    return JsonResponse(result,status=200)

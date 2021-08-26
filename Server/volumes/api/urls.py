@@ -4,7 +4,6 @@ from api import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('idDuplicateCheck',views.idCheck),
-    path('signup',views.signup),
-    path('test/',views.path),
-    path('searchMusic/',views.searchMusic())
+    path('signup',views.signUp),
+    path('searchMusic',views.searchMusic)
 ]
