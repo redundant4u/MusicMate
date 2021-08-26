@@ -18,7 +18,7 @@ class DB {
       join(await getDatabasesPath(), databaseName),
       version: 1,
       onCreate: (Database db, int version) async {
-        await db.execute("CREATE TABLE user   (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT, nickName TEXT, password TEXT)");
+        await db.execute("CREATE TABLE user   (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT, nickName TEXT, password TEXT, token TEXT, key TEXT)");
         await db.execute("CREATE TABLE music  (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT, artist TEXT, url TEXT)");
         await db.execute("CREATE TABLE friend (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT, nickName TEXT)");
 

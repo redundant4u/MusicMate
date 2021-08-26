@@ -33,9 +33,12 @@ class _MusicPageState extends State<MusicPage> {
                 )
               ),
               onEditingComplete: () {
-                setState(() {
-                  musicList = apiRequest(_textController.text);
-                });
+                  searchMusic(_textController.text).then((data) {
+                    setState(() { musicList = data; });
+                  }
+                );
+                print(musicList);
+                  // musicList = apiRequest(_textController.text);
               },
             ),
           ),

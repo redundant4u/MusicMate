@@ -34,3 +34,8 @@ void musicInsert(Music data) async {
 
   await _db.insert('music', _music.toMap());
 }
+
+void musicDelete(int id) async {
+  final Database? _db = await DB.instance.database;
+  await _db!.delete('music', where: "id = ?", whereArgs: [id]);
+}

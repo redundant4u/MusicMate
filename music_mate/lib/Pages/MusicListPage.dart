@@ -90,7 +90,11 @@ class _MusicListPageState extends State<MusicListPage> {
                         children: <Widget>[
                           IconButton(
                             icon: Icon(Icons.delete),
-                            onPressed: () {}
+                            onPressed: () {
+                              setState(() {
+                                musicDelete(snapshot.data![index].id!);
+                              });
+                            }
                           ),
                           IconButton(
                             icon: Icon(Icons.play_arrow),
@@ -98,8 +102,10 @@ class _MusicListPageState extends State<MusicListPage> {
                               int musicID = snapshot.data![index].id!;
                               String url = snapshot.data![index].url!;
                               String msg = "";
+
+                              print('url: ' + url);
                           
-                              if(url == 'null')
+                              if(url == 'empty')
                                 msg = "미리듣기 음악이 없습니다!";
                               else if(isPlaying && playMusicID == musicID) {
                                 _player.stop();

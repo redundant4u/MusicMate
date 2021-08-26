@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../Utils/RegisterValidation.dart';
 import '../../DB/User.dart';
+import '../../Utils/Api.dart';
 import '../../Models/User.dart';
 import './MainPage.dart';
 
@@ -122,6 +123,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 password: _controller[2].text
               );
 
+              signUp(_user);
               userInsert(_user);
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage()));

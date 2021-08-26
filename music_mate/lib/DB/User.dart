@@ -12,7 +12,9 @@ Future<User> getUser() async {
     _user = User(
       name    : _maps[0]['name'],
       nickName: _maps[0]['nickName'],
-      password: _maps[0]['password']
+      password: _maps[0]['password'],
+      token   : _maps[0]['token'],
+      key     : _maps[0]['key'],
     );
   }
 
@@ -25,7 +27,9 @@ void userInsert(User data) async {
   User _user = User(
     name    : data.name,
     nickName: data.nickName,
-    password: data.password
+    password: data.password,
+    token   : data.token,
+    key     : data.key
   );
 
   await _db!.insert('user', _user.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
