@@ -10,6 +10,7 @@ from rest_framework.parsers import JSONParser
 @csrf_exempt
 def idCheck(request):
     if request.method == 'GET':
+        id = request.GET['id']
         query_set = User.objects.all()
         serializer = User(query_set, many=True)
         return JsonResponse(serializer.data, safe=False)
