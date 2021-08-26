@@ -1,3 +1,4 @@
+from api.token import getToken
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -33,12 +34,15 @@ def signup(request):
     if request.method == 'POST':
         data = JSONParser().parse(request)
         cipher = AESCipher()
-
+        
         q = User(name=data['name'], password = cipher.encrypt(data['password']), nickName = data['nickName'], encryptKey=cipher.key)
         q.save()
+        token = getToken(q.id)
         result = dict()
-        result['statusCode'] = 404
-        result['status'] = 'Error'
+        result['statusCode'] = 200
+        result['status'] = 'allow'
+        result['key'] = q.encryptKey
+        result['token'] = token
         return JsonResponse(result, status = 404)
 
 # @csrf_exempt

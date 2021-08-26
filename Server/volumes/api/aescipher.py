@@ -1,6 +1,4 @@
 import base64
-import hashlib
-import time
 from Crypto import Random
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
@@ -26,9 +24,10 @@ class AESCipher:
         cipher = AES.new(self.key, AES.MODE_CBC, iv )
         return unpad(cipher.decrypt( enc[16:] ))
 
-# data = "Iran has seized a foreign oil tanker in the Persian Gulf that was smuggling fuel to some Arab states, according to a state television report on Sunday. The report said that the tanker had been detained and the ship's foreign crew held by the country's elite Islamic Revolutionary Guards Corps."
+data = "Iran has seized a foreign oil tanker in the Persian Gulf that was smuggling fuel to some Arab states, according to a state television report on Sunday. The report said that the tanker had been detained and the ship's foreign crew held by the country's elite Islamic Revolutionary Guards Corps."
 
-# a = AESCipher()
-# b = a.encrypt(data)
-# c = a.decrypt(b)
-# c = c.decode('utf-8')
+a = AESCipher()
+b = a.encrypt(data)
+print(a.key)
+c = a.decrypt(b)
+c = c.decode('utf-8')

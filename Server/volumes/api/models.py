@@ -9,7 +9,7 @@ class Song(models.Model):
     album_name = models.CharField(max_length=30, null=False)
 
 class loginToken(models.Model):
-    token = models.CharField(max_length=20, primary_key=True)
+    token = models.CharField(max_length=65, primary_key=True)
     expired = models.BooleanField(null=False, default= True)
     expireDate = models.DateTimeField()
 
