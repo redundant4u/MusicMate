@@ -7,6 +7,10 @@ from .serializers import SongSeriallizer
 from rest_framework.parsers import JSONParser
 from .serializers import UserSeriallizer
 from .aescipher import AESCipher
+
+import base64
+import json
+import requests
 import datetime
 
 @csrf_exempt
@@ -30,7 +34,7 @@ def idCheck(request):
             return JsonResponse(result, status = 404)
 
 @csrf_exempt
-def signup(request):
+def signUp(request):
     if request.method == 'POST':
         try:
             data = JSONParser().parse(request)
@@ -55,6 +59,56 @@ def signup(request):
             return JsonResponse(result, status = 404)
             
 
+client_id = 'ee7b63f166a142a3b29f5f6c8095eb1d'
+client_secret = 'e83335f20e2e47e89d230ad1b7efe7bc'
+
+# SPOTIFY API TOKEN 받기
+def get_headers(client_id, client_secret):
+    endpoint = 'https://accounts.spotify.com/api/token'
+
+    encoded = base64.b64encode('{}:{}'.format(client_id,client_secret).encode('utf-8')).decode('ascii')
+    headers = {'Authorization' : 'Basic {}'.format(encoded)}
+    grant_type = {'grant_type' : 'client_credentials'}
+
+    res = requests.post(endpoint, headers=headers, data=grant_type)
+    raw = json.loads(res.text)
+    access_token = raw['access_token']
+
+    headers = {'Authorization' : 'Bearer {}'.format(access_token)}
+    return headers
+
+
 # @csrf_exempt
-# def searchUser(request):
-#     if request.method == ''
+def searchMusic(request):
+    # Spotify API 에서 검색 결과 받아오기
+    endpoint = 'https://api.spotify.com/v1/search'
+    spotify_token = get_headers(client_id, client_secret)
+    params = {
+        'q': request.GET['search'],
+        'type': 'track',
+        'limit': '1'
+    }
+
+    r = requests.get(endpoint,params=params,headers=spotify_token)
+    raw = json.loads(r.text)
+
+    # Json Filtering
+    items = []
+    for i in range(0,len(raw['tracks']['items'])):
+        item = {
+            'musicName': raw['tracks']['items'][i]['name'],
+            'artist': raw['tracks']['items'][i]['artists'][0]['name'],
+            'musicPreview': raw['tracks']['items'][i]['preview_url'],
+            'albumArt': raw['tracks']['items'][i]['album']['images'][0]['url'],
+            'albumName': raw['tracks']['items'][i]['album']['name']
+        }
+        items.append(item)
+
+    # Result
+    result = {
+        'statusCode' : 200,
+        'status': 'success',
+        'items': items
+    }
+
+    return JsonResponse(result,status=200)
