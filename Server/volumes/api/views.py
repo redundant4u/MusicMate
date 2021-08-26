@@ -7,11 +7,12 @@ from .serializers import SongSeriallizer
 from rest_framework.parsers import JSONParser
 from .serializers import UserSeriallizer
 from .aescipher import AESCipher
+
 import base64
 import json
 import requests
+import datetime
 
-# Create your views here.
 @csrf_exempt
 def idCheck(request):
     if request.method == 'GET':
@@ -35,18 +36,28 @@ def idCheck(request):
 @csrf_exempt
 def signUp(request):
     if request.method == 'POST':
-        data = JSONParser().parse(request)
-        cipher = AESCipher()
-        
-        q = User(name=data['name'], password = cipher.encrypt(data['password']), nickName = data['nickName'], encryptKey=cipher.key)
-        q.save()
-        token = getToken(q.id)
-        result = dict()
-        result['statusCode'] = 200
-        result['status'] = 'allow'
-        result['key'] = q.encryptKey
-        result['token'] = token
-        return JsonResponse(result, status = 404)
+        try:
+            data = JSONParser().parse(request)
+            cipher = AESCipher()
+            
+            userQuery = User(name=data['name'], password = cipher.encrypt(data['password']), nickName = data['nickName'], encryptKey=cipher.key)
+            userQuery.token = getToken(userQuery.id)
+            userQuery.expired = False
+            userQuery.expireTime = datetime.datetime.now() + datetime.timedelta(hours=1)
+            userQuery.save()
+
+            result = dict()
+            result['statusCode'] = 200
+            result['status'] = 'allow'
+            result['key'] = userQuery.encryptKey
+            result['token'] = userQuery.token
+            return JsonResponse(result, status = 200)
+        except:
+            result = dict()
+            result['statusCode'] = 404
+            result['status'] = 'error'
+            return JsonResponse(result, status = 404)
+            
 
 client_id = 'ee7b63f166a142a3b29f5f6c8095eb1d'
 client_secret = 'e83335f20e2e47e89d230ad1b7efe7bc'
