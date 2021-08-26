@@ -8,5 +8,8 @@ urlpatterns = [
     path('searchMusic', views.searchMusic),
     path('searchUser', views.searchUser),
     path('updateFriendList', views.updateFriendList),
-    path('getFriendList', views.getFriendList)
+    path('getFriendList', views.getFriendList),
+    path('updateMusicList/add',views.addMusic),
+    path('updateMusicList/delete',views.deleteMusic),
+    path('getMusicList',views.getMusicList),
 ]

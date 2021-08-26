@@ -34,4 +34,4 @@ def isValid(token : str):
         return False
 
 # print(getToken(3))
-updateToken('0cfbb7bb245835adf1ce58b9a023c47fb67b5a62bb3cc4936db7debde450f38e')
+updateToken('0b550bd9b7c04e57a7acdb0611c1d91e154493b66d3f04ebbd89143d2477d8e8')
