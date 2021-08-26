@@ -1,6 +1,6 @@
 from django.db import models
 
-class Song(models.Model):
+class Music(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=30, null=False)
     artist = models.CharField(max_length=30, null=False)
@@ -20,13 +20,13 @@ class User(models.Model):
     expireTime = models.DateTimeField(null=True)
 
     songs = models.ManyToManyField(
-        Song,
+        Music,
         through='UserSong',
         through_fields=('user_id', 'song_id',)
     )
     
 class UserSong(models.Model):
-    song_id = models.ForeignKey(Song, on_delete=models.CASCADE)
+    song_id = models.ForeignKey(Music, on_delete=models.CASCADE)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Friend(models.Model):
