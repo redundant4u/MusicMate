@@ -227,6 +227,7 @@ def addMusic(request):
 
                 result = dict()
                 result['statusCode'] = 200
+                result['musicId'] = musicToAdd.id
                 result['status'] = "Success"
                 updateToken(data['userToken'])
                 return JsonResponse(result, status = 200)
