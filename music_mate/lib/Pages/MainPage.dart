@@ -43,8 +43,10 @@ class _MainPageState extends State<MainPage> {
             padding: const EdgeInsets.all(10.0),
             child: IconButton(
             icon: Icon(Icons.add, color: Colors.black, size: 30),
-              onPressed: () {
-                _searchPage();
+              onPressed: () async {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage())).then((_) {
+                  setState(() {});
+                });
               },
             ),
           ),
