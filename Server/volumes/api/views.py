@@ -2,7 +2,7 @@ from api.token import getToken, isValid, updateToken
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import User
+from .models import User, Friend
 from .serializers import SongSeriallizer
 from rest_framework.parsers import JSONParser
 from .serializers import UserSeriallizer
@@ -138,6 +138,35 @@ def searchUser(request):
         result['statusCode'] = 404
         result['status'] = 'error'
         return JsonResponse(result, status = 404)
+
+@csrf_exempt
+def upDateFriendList(request):
+    if request.method == 'POST':
+        if request.GET['method'] == 'add':
+            try:
+                data = JSONParser().parse(request)
+                if isValid(data['userToken']):
+                    userid = User.objects.get(token=data['userToken'])
+                    friendid = User.objects.get(name=data['friendName'])
+                    queryset = Friend(user_id=userid, friend_id = friendid)
+                    queryset.save()
+                    updateToken(data['userToken'])
+                    result = dict()
+                    result['statusCode'] = 200
+                    result['status'] = 'Success'
+                    return JsonResponse(result, status = 200)
+                else:
+                    result = dict()
+                    result['statusCode'] = 401
+                    result['status'] = 'Token-expired'
+                    return JsonResponse(result, status = 401)
+            except Exception as e:
+                pass
+    result = dict()
+    result['statusCode'] = 404
+    result['status'] = 'error'
+    return JsonResponse(result, status = 404)
+
 # SPOTIFY API TOKEN 받기
 def get_headers(client_id, client_secret):
     endpoint = 'https://accounts.spotify.com/api/token'

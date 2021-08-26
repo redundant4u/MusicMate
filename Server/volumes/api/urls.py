@@ -6,5 +6,6 @@ urlpatterns = [
     path('signUp', views.signUp),
     path('login',views.login),
     path('searchMusic', views.searchMusic),
-    path('searchUser', views.searchUser)
+    path('searchUser', views.searchUser),
+    path('updateFriendList', views.upDateFriendList)
 ]
