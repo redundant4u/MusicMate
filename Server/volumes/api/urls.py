@@ -7,5 +7,6 @@ urlpatterns = [
     path('login',views.login),
     path('searchMusic', views.searchMusic),
     path('searchUser', views.searchUser),
-    path('updateFriendList', views.upDateFriendList)
+    path('updateFriendList', views.updateFriendList),
+    path('getFriendList', views.getFriendList)
 ]

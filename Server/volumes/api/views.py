@@ -140,7 +140,7 @@ def searchUser(request):
         return JsonResponse(result, status = 404)
 
 @csrf_exempt
-def upDateFriendList(request):
+def updateFriendList(request):
     if request.method == 'POST':
         if request.GET['method'] == 'add':
             try:
@@ -167,6 +167,37 @@ def upDateFriendList(request):
     result['status'] = 'error'
     return JsonResponse(result, status = 404)
 
+@csrf_exempt
+def getFriendList(request):
+    if request.method == 'POST':
+        try:
+            data = JSONParser().parse(request)
+            if isValid(data['userToken']):
+                query_set = Friend.objects.filter(user_id_id = User.objects.get(token=data['userToken']))
+                items = []
+                for friendIter in query_set:
+                    friendInfo = dict()
+                    friendInfo['name'] = friendIter.friend_id.name
+                    friendInfo['nickName'] = friendIter.friend_id.nickName
+                    items.append(friendInfo)
+                updateToken(data['userToken'])
+                result = dict()
+                result['itemSize'] = items.__len__()
+                result['statusCode'] = 200
+                result['status'] = 'Success'
+                result['items'] = items
+                return JsonResponse(result, status = 200)
+            else:
+                result = dict()
+                result['statusCode'] = 401
+                result['status'] = 'Token-expired'
+                return JsonResponse(result, status = 401)
+        except Exception as e:
+            pass
+    result = dict()
+    result['statusCode'] = 404
+    result['status'] = 'error'
+    return JsonResponse(result, status = 404)
 # SPOTIFY API TOKEN 받기
 def get_headers(client_id, client_secret):
     endpoint = 'https://accounts.spotify.com/api/token'
