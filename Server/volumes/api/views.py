@@ -83,7 +83,7 @@ def searchMusic(request):
     params = {
         'q': request.GET['search'],
         'type': 'track',
-        'limit': '1'
+        'limit': '20'
     }
 
     r = requests.get(endpoint,params=params,headers=spotify_token)
