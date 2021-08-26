@@ -66,13 +66,23 @@ class _PrivacyInformationState extends State<PrivacyInformation> {
                     padding: const EdgeInsets.all(15.0),
                     child: Text(_infoName[i], style: TextStyle(color: Colors.black, fontSize: 20.0))
                   ),
-                  Container(
-                    padding: const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 15.0),
-                    child: TextFormField(
-                      readOnly: true,
-                      controller: _controller[i],
+                  if(i != 2)
+                    Container(
+                      padding: const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 15.0),
+                      child: TextFormField(
+                        readOnly: true,
+                        controller: _controller[i],
+                      ),
                     ),
-                  )
+                  if(i == 2)
+                    Container(
+                      padding: const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 15.0),
+                      child: TextFormField(
+                        readOnly: true,
+                        obscureText: true,
+                        controller: _controller[i],
+                      ),
+                    )
                 ]
               )
             )

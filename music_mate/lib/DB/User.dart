@@ -12,6 +12,7 @@ Future<User> getUser() async {
     _user = User(
       name    : _maps[0]['name'],
       nickName: _maps[0]['nickName'],
+      password: _maps[0]['password']
     );
   }
 

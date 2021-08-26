@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:test/DB/User.dart';
 
 import '../Utils/ShowPage.dart';
+import '../Models/User.dart';
 import './SearchPage.dart';
 
 class MainPage extends StatefulWidget {
@@ -19,9 +21,19 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: Colors.white,
         elevation: 0.0,
         centerTitle: false,
-        title: Text(
-          "NAME",
-          style: TextStyle(color: Colors.black, fontSize: 30)
+        title: FutureBuilder<User>(
+          future: getUser(),
+          builder: (context, snapshot) {
+            if(snapshot.hasData) {
+              return Text(
+                snapshot.data!.nickName!,
+                style: TextStyle(color: Colors.black, fontSize: 30)
+              );
+            }
+            else {
+              return Text('');
+            }
+          },
         ),
         actions: <Widget>[
           IconButton(

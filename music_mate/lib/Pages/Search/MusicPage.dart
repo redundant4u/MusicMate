@@ -9,7 +9,7 @@ class MusicPage extends StatefulWidget {
 }
 
 class _MusicPageState extends State<MusicPage> {
-  TextEditingController _textEditingController = TextEditingController(text: '');
+  TextEditingController _textController = TextEditingController(text: '');
   List<Music>? musicList = [];
 
   @override
@@ -20,7 +20,7 @@ class _MusicPageState extends State<MusicPage> {
           Container(
             margin: const EdgeInsets.all(10.0),
             child: TextField(
-              controller: _textEditingController,
+              controller: _textController,
               decoration: InputDecoration(
                 hintText: '음악 제목',
                 enabledBorder: OutlineInputBorder(
@@ -34,7 +34,7 @@ class _MusicPageState extends State<MusicPage> {
               ),
               onEditingComplete: () {
                 setState(() {
-                  musicList = apiRequest(_textEditingController.text);
+                  musicList = apiRequest(_textController.text);
                 });
               },
             ),

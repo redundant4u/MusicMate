@@ -11,21 +11,24 @@ class _SettingPageState extends State<SettingPage> {
   final List<String> _titles = [ '개인정보' ];
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      separatorBuilder: (context, index) => Divider(color: Colors.black),
-      itemCount: _titles.length,
-      itemBuilder: (BuildContext context, int i) {
-        return ListTile(
-          title: Text(_titles[i]),
-          onTap: () {
-            switch(i) {
-              case 0:
-                Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacyInformation()));
-                break;
+    return Container(
+      padding: const EdgeInsets.only(top: 15.0),
+      child: ListView.separated(
+        separatorBuilder: (context, index) => Divider(color: Colors.black),
+        itemCount: _titles.length,
+        itemBuilder: (BuildContext context, int i) {
+          return ListTile(
+            title: Text(_titles[i], style: TextStyle(fontSize: 20.0)),
+            onTap: () {
+              switch(i) {
+                case 0:
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacyInformation()));
+                  break;
+              }
             }
-          }
-        );
-      },
+          );
+        },
+      )
     );
   }
 }

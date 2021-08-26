@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../Utils/RegisterValidation.dart';
+import '../../DB/User.dart';
 import '../../Models/User.dart';
 import './MainPage.dart';
 
@@ -64,14 +65,26 @@ class _SignUpPageState extends State<SignUpPage> {
                     padding: const EdgeInsets.all(15.0),
                     child: Text(_registerName[i], style: TextStyle(color: Colors.black, fontSize: 20.0))
                   ),
-                  if(i != 2)
+                  if(i == 0)
                     Container(
                       padding: const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 15.0),
                       child: TextFormField(
                         controller: _controller[i],
                         validator: (_value) {
                           if(idValidation(_value)) {
-                            return "영어(소문자, 대문자)으로만 적어주세요.";
+                            return "5~20자 사이의 영어, 숫자으로만 적어주세요.";
+                          }
+                        },
+                      ),
+                    ),
+                  if(i == 1)
+                    Container(
+                      padding: const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 15.0),
+                      child: TextFormField(
+                        controller: _controller[i],
+                        validator: (_value) {
+                          if(nickIDValidation(_value)) {
+                            return "2~5자 사이의 영어, 숫자으로만 적어주세요.";
                           }
                         },
                       ),
@@ -109,7 +122,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 password: _controller[2].text
               );
 
-              // userInsert(_user);
+              userInsert(_user);
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage()));
             }
