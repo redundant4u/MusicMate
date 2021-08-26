@@ -9,10 +9,10 @@ pad = lambda s: s + (BS - len(s.encode('utf-8')) % BS) * chr(BS - len(s.encode('
 unpad = lambda s : s[:-ord(s[len(s)-1:])]
 
 class AESCipher:
-    def __init__(self):
-        key = ""
-        for p in range(0, 32):
-            key += random.choice(string.ascii_letters)
+    def __init__(self, key = ""):
+        if key == "":
+            for p in range(0, 32):
+                key += random.choice(string.ascii_letters)
         self.key = key
     def encrypt( self, raw ):
         key = self.key.encode('utf-8')
@@ -32,7 +32,8 @@ class AESCipher:
 
 # a = AESCipher()
 # b = a.encrypt(data)
-# print(b)
-# c = a.decrypt(b)
-# c = c.decode('utf-8')
-# print(c)
+# c = b.decode('utf-8')
+
+# result = a.decrypt(c.encode('utf-8'))
+# result = result.decode('utf-8')
+# print(result)
