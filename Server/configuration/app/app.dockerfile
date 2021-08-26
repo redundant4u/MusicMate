@@ -2,7 +2,7 @@ FROM python:3.6
 
 ENV PYTHONUNBUFFERED=1
 
-RUN useradd -m redundant
+RUN useradd -u 1001 -m redundant
 
 RUN apt-get update
 RUN apt-get install -y \
