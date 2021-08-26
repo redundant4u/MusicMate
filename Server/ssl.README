@@ -1,0 +1,5 @@
+web 컨테이너로 접속한 후 직접 certbot을 통하여 ssl을 적용시켜줘야 합니다.
+또한 횐경설정에 맞춰 Server/configuraion/web/conf.d/default.conf 파일에서 server_name 값을 수정해주세요.
+
+docker exec -it web sh
+certbot --nginx -d yourdomain.com -d www.yourdomain.com
