@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API</title>
+</head>
+<body>
+
+    <!-- 회원가입 -->
+    <form action="/api/signup/" method="POST">
+        {% csrf_token %}
+        ID : <input type="text" name="id">
+        NAME : <input type="text" name="name">
+        NICKNAME : <input type="text" name="nickname">
+        PASSWORD : <input type="text" name="password">
+        <input type="submit" value="SIGN UP">
+    </form>
+
+    <!-- 음악검색 -->
+    <form action="/api/searchMusic/" method="GET">
+        Search Music : <input type="text" name="search">
+        <input type="submit" value="SIGN UP">
+    </form>
+
+</body>
+</html>
