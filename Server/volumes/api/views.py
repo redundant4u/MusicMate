@@ -1,4 +1,4 @@
-from api.token import getToken
+from api.token import getToken, isValid, updateToken
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -8,11 +8,13 @@ from rest_framework.parsers import JSONParser
 from .serializers import UserSeriallizer
 from .aescipher import AESCipher
 from api.key import Config
+from datetime import timezone
 
 import base64
 import json
 import requests
 import datetime
+import api.token
 
 @csrf_exempt
 def idCheck(request):
@@ -50,7 +52,7 @@ def signUp(request):
             userQuery = User(name=data['name'], password = cipher.encrypt(data['password']).decode('utf-8'), nickName = data['nickName'], encryptKey=cipher.key)
             userQuery.token = getToken(userQuery.id)
             userQuery.expired = False
-            userQuery.expireTime = datetime.datetime.now() + datetime.timedelta(hours=1)
+            userQuery.expireTime = datetime.datetime.now(timezone.utc) + datetime.timedelta(hours=1)
             userQuery.save()
 
             result = dict()
@@ -82,7 +84,7 @@ def login(request):
             if data['password'] == password:
                 searchResult.token = getToken(searchResult.id)
                 searchResult.expired = False
-                searchResult.expireTime = datetime.datetime.now() + datetime.timedelta(hours=1)
+                searchResult.expireTime = datetime.datetime.now(timezone.utc) + datetime.timedelta(hours=1)
                 searchResult.save()
                 result = dict()
                 result['statusCode'] = 200
@@ -102,6 +104,40 @@ def login(request):
         result['status'] = 'error'
         return JsonResponse(result, status = 404)
 
+@csrf_exempt
+def searchUser(request):
+    if request.method == 'POST':
+        try:
+            data = JSONParser().parse(request)
+            if isValid(data['userToken']):
+                query_set = User.objects.filter(name__contains = data['userName'])
+                friendList = []
+                for friend in query_set:
+                    info = dict()
+                    info['name'] = friend.name
+                    info['nickName'] = friend.nickName
+                    friendList.append(info)
+                result = dict()
+                result['statusCode'] = 200
+                result['status'] = "Success"
+                result['items'] = friendList
+                updateToken(data['userToken'])
+                return JsonResponse(result, status = 200)
+            else :
+                result = dict()
+                result['statusCode'] = 401
+                result['status'] = 'Token-expired'
+                return JsonResponse(result, status = 401)
+        except Exception as e:
+            result = dict()
+            result['statusCode'] = 404
+            result['status'] = 'error'
+            return JsonResponse(result, status = 404)
+    else:
+        result = dict()
+        result['statusCode'] = 404
+        result['status'] = 'error'
+        return JsonResponse(result, status = 404)
 # SPOTIFY API TOKEN 받기
 def get_headers(client_id, client_secret):
     endpoint = 'https://accounts.spotify.com/api/token'
