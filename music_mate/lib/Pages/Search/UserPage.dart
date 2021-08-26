@@ -59,6 +59,8 @@ class _UserPageState extends State<UserPage> {
                     icon: Icon(Icons.add),
                     onPressed: () async {
                       if(await insertFriend(_friendsList![index])) {
+                        insertFriendForServer(_friendsList![index]);
+
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('친구가 추가되었어요'),

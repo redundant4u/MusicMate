@@ -37,5 +37,5 @@ void userInsert(User data) async {
 
 void userTokenUpdate(String token) async {
   final Database? _db = await DB.instance.database;
-  _db!.rawQuery("UPDATE user SET token = $token WHERE id = 1");
+  _db!.rawQuery("UPDATE user SET token = '$token' WHERE id = 1");
 }

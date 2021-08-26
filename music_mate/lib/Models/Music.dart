@@ -1,8 +1,8 @@
 class Music {
-  int? id;
+  int? id, musicId;
   String? name, artist, url;
 
-  Music({ this.id, this.name, this.artist, this.url });
+  Music({ this.id, this.name, this.artist, this.url, this.musicId });
   Music.fromJson(Map<String, dynamic> json) {
     this.name = json['name'];
     this.url = json['preview_url'];
@@ -15,6 +15,19 @@ class Music {
       'name': name,
       'artist': artist,
       'url': url,
+      'musicId': musicId
     };
   }
+
+  @override
+  int get hashCode {
+    return this.name.hashCode ^ this.artist.hashCode;
+  }
+
+  @override
+  operator == (dynamic other) {
+    if(!(other is Music))
+      return false;
+    return (this.name == other.name) && (this.artist == other.artist);
+  } 
 }

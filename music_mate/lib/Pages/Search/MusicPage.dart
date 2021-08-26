@@ -59,7 +59,7 @@ class _MusicPageState extends State<MusicPage> {
                   trailing: IconButton(
                     icon: Icon(Icons.add),
                     onPressed: () async {
-                      if(await insertMusic(_musicList![index])) {
+                      if(await insertMusicForServer(_musicList![index])) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('음악이 추가되었어요'),

@@ -17,23 +17,28 @@ Future<List<Music>> getMusicList() async {
   });
 }
 
-Future<bool> insertMusic(Music data) async {
+Future<bool> isduplicatedMusic(Music data) async {
   final Database? _db = await DB.instance.database;
-  final List<Map<String, dynamic>> _maps = await _db!.rawQuery("SELECT name FROM music");
+  final List<Map<String, dynamic>> _maps = await _db!.rawQuery("SELECT musicId FROM music");
 
   for(var i in _maps) {
-    if(i['name'] == data.name)
-      return false;
+    if(i['musicId'] == data.musicId)
+      return true;
   }
+
+  return false;
+}
+
+void insertMusic(Music data) async {
+  final Database? _db = await DB.instance.database;
 
   Music _music = Music(
     name  : data.name,
     artist: data.artist,
-    url   : data.url
+    url   : data.url,
+    musicId: data.musicId
   );
-  await _db.insert('music', _music.toMap());
-
-  return true;
+  await _db!.insert('music', _music.toMap());
 }
 
 void deleteMusic(int id) async {

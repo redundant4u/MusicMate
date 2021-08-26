@@ -35,14 +35,18 @@ class _SignUpPageState extends State<SignUpPage> {
           )
         ),
       ),
-      body: Container(
-        margin: const EdgeInsets.all(20.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: _registerWidget()
-          ),
-        ),     
+      body: ListView(
+        children: <Widget>[
+          Container(
+            margin: const EdgeInsets.all(20.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: _registerWidget()
+              ),
+            ),
+          )
+        ]   
       )
     );
   }

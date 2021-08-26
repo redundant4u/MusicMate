@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:encrypt/encrypt.dart';
+import 'package:test/DB/Music.dart';
 
 import '../../Models/Music.dart';
 import '../../Models/User.dart';
@@ -84,7 +85,7 @@ Future<bool> login(User user) async {
 }
 
 Future<List<Music>> searchMusic(String q) async {
-  List<Music>? _musicList = [];
+  Set<Music>? _musicList = {};
   final _searchMusicRequest = await http.get(
     Uri.parse(url + 'searchMusic?search=$q')
   );
@@ -101,7 +102,7 @@ Future<List<Music>> searchMusic(String q) async {
     }
   }
 
-  return _musicList;
+  return _musicList.toList();
 }
 
 Future<List<Friend>> searchUsers(String q) async {
@@ -120,7 +121,6 @@ Future<List<Friend>> searchUsers(String q) async {
   );
   Map<String, dynamic> _searchFriendsResponse = jsonDecode(_searchFriendsRequest.body);
   int _status = _searchFriendsResponse['statusCode'];
-  print(_searchFriendsResponse);
 
   if(_status == 200) {
     for(var i in _searchFriendsResponse['items']) {
@@ -133,11 +133,67 @@ Future<List<Friend>> searchUsers(String q) async {
     }
   }
   else if(_status == 401) {
-    print('token expired');
     bool _updateToken = await login(_user);
     if(_updateToken)
       searchUsers(q);
   }
 
   return _friendsList;
+}
+
+// method=add or mehtod=delete
+void insertFriendForServer(Friend friend) async {
+  final User _user = await getUser();
+
+  final _insertFriendRequest = await http.post(
+    Uri.parse(url + 'updateFriendList?method=add'),
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: json.encode({
+      "userToken": _user.token,
+      "friendName": friend.name
+    })
+  );
+  Map<String, dynamic> _insertFriendResponse = jsonDecode(_insertFriendRequest.body);
+
+  if(_insertFriendResponse['statusCode'] == 401) {
+    await login(_user);
+    insertFriendForServer(friend);
+  }
+}
+
+Future<bool> insertMusicForServer(Music music) async {
+  final User _user = await getUser();
+
+  if(!await isduplicatedMusic(music)) {
+    final _insertMusicRequest = await http.post(
+    Uri.parse(url + 'updateMusicList/add'),
+      headers: {
+        "Content-Type": "apllication/json"
+      },
+      body: json.encode({
+        "userToken": _user.token,
+        "name": music.name,
+        "artist": music.artist,
+        "preview_url": music.url,
+        "albumart_url": "",
+        "album_name": ""
+      })
+    );
+    Map<String, dynamic> _insertMusicResponse = jsonDecode(_insertMusicRequest.body);
+
+    if(_insertMusicResponse['statusCode'] == 200) {
+      music.musicId = _insertMusicResponse['musicId'];
+      insertMusic(music);
+
+      return true;
+    }
+    else if(_insertMusicResponse['statusCode'] == 401) {
+      await login(_user);
+      return await insertMusicForServer(music);
+    }
+  }
+
+  return false;
 }
