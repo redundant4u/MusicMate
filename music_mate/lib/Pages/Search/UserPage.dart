@@ -2,19 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:test/DB/Friend.dart';
 
 import '../../Models/Friend.dart';
+import '../../Utils/Api.dart';
 
-class FriendsPage extends StatefulWidget {
+class UserPage extends StatefulWidget {
   @override
-  _FriendsPageState createState() => _FriendsPageState();
+  _UserPageState createState() => _UserPageState();
 }
 
-class _FriendsPageState extends State<FriendsPage> {
+class _UserPageState extends State<UserPage> {
   TextEditingController _textController = TextEditingController(text: '');
-  List<Friend>? friendsList = [
-    Friend(name: 'jseori', nickName: '설'),
-    Friend(name: 'chaewon', nickName: '채원'),
-    Friend(name: 'seungil', nickName: '승길'),
-  ];
+  List<Friend>? _friendsList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +34,14 @@ class _FriendsPageState extends State<FriendsPage> {
                 )
               ),
               onEditingComplete: () {
-                setState(() {
-                  // friendsList = apiRequest();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('검색 중...'),
+                    duration: const Duration(seconds: 1)
+                  )
+                );
+                searchUsers(_textController.text).then((data) {
+                  setState(() { _friendsList = data; });
                 });
               }
             ),
@@ -48,15 +51,29 @@ class _FriendsPageState extends State<FriendsPage> {
             child: ListView.separated(
               shrinkWrap: true,
               separatorBuilder: (context, index) => Divider(color: Colors.black),
-              itemCount: friendsList!.length,
+              itemCount: _friendsList!.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(friendsList![index].name!),
+                  title: Text(_friendsList![index].name!),
                   trailing: IconButton(
                     icon: Icon(Icons.add),
-                    onPressed: () {
-                      friendInsert(friendsList![index]);
-                      print('insert!');
+                    onPressed: () async {
+                      if(await insertFriend(_friendsList![index])) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('친구가 추가되었어요'),
+                            duration: const Duration(seconds: 1),
+                          )
+                        );
+                      }
+                      else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('이미 추가한 친구에요'),
+                            duration: const Duration(seconds: 1),
+                          )
+                        );
+                      }
                     },
                   ),
                 );

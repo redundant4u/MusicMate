@@ -6,7 +6,6 @@ class User {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'name': name,
       'nickName': nickName,
       'password': password,

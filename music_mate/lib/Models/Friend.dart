@@ -1,5 +1,3 @@
-import './Music.dart';
-
 class Friend {
   String? name, nickName;
 

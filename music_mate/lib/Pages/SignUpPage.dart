@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:test/DB/Friend.dart';
 
 import '../../Utils/RegisterValidation.dart';
-import '../../DB/User.dart';
 import '../../Utils/Api.dart';
 import '../../Models/User.dart';
 import '../../Models/Friend.dart';
@@ -117,7 +116,7 @@ class _SignUpPageState extends State<SignUpPage> {
       Container(
         child: ElevatedButton(
           child: Text('확인'),
-          onPressed: () {
+          onPressed: () async {
             if(_formKey.currentState!.validate()) {
               User _user = User(
                 name: _controller[0].text,
@@ -129,11 +128,19 @@ class _SignUpPageState extends State<SignUpPage> {
                 nickName: _controller[1].text
               );
 
-              signUp(_user);
-              friendInsert(_friend);
-              userInsert(_user);
-              Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage()));
+              if(await signUp(_user)) {
+                insertFriend(_friend);
+
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage()));
+              }
+              else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('회원가입에 오류가 발생했어요'),
+                  )
+                );
+              }
             }
           },
         )

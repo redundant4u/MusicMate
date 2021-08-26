@@ -25,9 +25,12 @@ class _MainPageState extends State<MainPage> {
           future: getUser(),
           builder: (context, snapshot) {
             if(snapshot.hasData) {
-              return Text(
-                snapshot.data!.nickName!,
-                style: TextStyle(color: Colors.black, fontSize: 30)
+              return Container(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  snapshot.data!.nickName!,
+                  style: TextStyle(color: Colors.black, fontSize: 35)
+                )
               );
             }
             else {
@@ -36,11 +39,14 @@ class _MainPageState extends State<MainPage> {
           },
         ),
         actions: <Widget>[
-          IconButton(
+          Container(
+            padding: const EdgeInsets.all(10.0),
+            child: IconButton(
             icon: Icon(Icons.add, color: Colors.black, size: 30),
-            onPressed: () {
-              _searchPage();
-            },
+              onPressed: () {
+                _searchPage();
+              },
+            ),
           ),
         ],
       ),

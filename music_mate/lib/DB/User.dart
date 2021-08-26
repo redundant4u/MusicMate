@@ -34,3 +34,8 @@ void userInsert(User data) async {
 
   await _db!.insert('user', _user.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
 }
+
+void userTokenUpdate(String token) async {
+  final Database? _db = await DB.instance.database;
+  _db!.rawQuery("UPDATE user SET token = $token WHERE id = 1");
+}

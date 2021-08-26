@@ -10,7 +10,7 @@ class MusicPage extends StatefulWidget {
 
 class _MusicPageState extends State<MusicPage> {
   TextEditingController _textController = TextEditingController(text: '');
-  List<Music>? musicList = [];
+  List<Music>? _musicList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +33,16 @@ class _MusicPageState extends State<MusicPage> {
                 )
               ),
               onEditingComplete: () {
-                  searchMusic(_textController.text).then((data) {
-                    setState(() { musicList = data; });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('검색 중...'),
+                    duration: const Duration(seconds: 1)
+                  )
+                );
+                searchMusic(_textController.text).then((data) {
+                    setState(() { _musicList = data; });
                   }
                 );
-                print(musicList);
-                  // musicList = apiRequest(_textController.text);
               },
             ),
           ),
@@ -47,15 +51,30 @@ class _MusicPageState extends State<MusicPage> {
             child: ListView.separated(
               shrinkWrap: true,
               separatorBuilder: (context, index) => Divider(color: Colors.black),
-              itemCount: musicList!.length,
+              itemCount: _musicList!.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(musicList![index].name!),
-                  subtitle: Text(musicList![index].artist!),
+                  title: Text(_musicList![index].name!),
+                  subtitle: Text(_musicList![index].artist!),
                   trailing: IconButton(
                     icon: Icon(Icons.add),
-                    onPressed: () {
-                      musicInsert(musicList![index]);
+                    onPressed: () async {
+                      if(await insertMusic(_musicList![index])) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('음악이 추가되었어요'),
+                            duration: const Duration(seconds: 1),
+                          )
+                        );
+                      }
+                      else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('이미 추가된 음악에요'),
+                            duration: const Duration(seconds: 1),
+                          )
+                        );
+                      }
                     },
                   ),
                 );

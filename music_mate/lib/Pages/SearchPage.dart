@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import './Search/MusicPage.dart';
-import './Search/FriendsPage.dart';
+import 'Search/UserPage.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -61,4 +61,4 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
 }
 
 Widget _musicPage() { return MusicPage(); }
-Widget _friendsPage() { return FriendsPage(); }
+Widget _friendsPage() { return UserPage(); }

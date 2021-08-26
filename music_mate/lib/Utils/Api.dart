@@ -5,11 +5,12 @@ import 'package:encrypt/encrypt.dart';
 
 import '../../Models/Music.dart';
 import '../../Models/User.dart';
+import '../../Models/Friend.dart';
 import '../../DB/User.dart';
 
 String url = "https://redundant4u.com/api/";
 
-void signUp(User user) async {
+Future<bool> signUp(User user) async {
   final _idCheckRequest = await http.get(
     Uri.parse(url + 'idDuplicateCheck?id=${user.name}')
   );
@@ -32,7 +33,9 @@ void signUp(User user) async {
     if(_signUpResponse['statusCode'] == 200) {    
       final key = Key.fromUtf8(_signUpResponse['key']);
       final iv = IV.fromLength(16);
+
       final encrypter = Encrypter(AES(key));
+
       final encrypted = encrypter.encrypt(user.password!, iv: iv);
 
       User _user = User(
@@ -44,25 +47,40 @@ void signUp(User user) async {
       );
 
       userInsert(_user);
+
+      return true;
     }
   }
+
+  return false;
 }
 
-void login(User user) {
-  Map data = {
-    "name": user.name,
-    "password": user.password,
-  };
+Future<bool> login(User user) async {
+  final key = Key.fromUtf8(user.key!);
+  final iv = IV.fromLength(16);
 
-  // final response = await http.post(
-  //   Uri.parse(url + 'login'),
-  //   headers: {
-  //     "Content-Type": "application/json"
-  //   },
-  //   body: json.encode(data)
-  // );
+  final encrypter = Encrypter(AES(key));
 
+  final decrypted = encrypter.decrypt(Encrypted.from64(user.password!), iv: iv);
 
+  final _loginRequest = await http.post(
+    Uri.parse(url + 'login'),
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: json.encode({
+      "name": user.name,
+      "password": decrypted
+    })
+  );
+  Map<String, dynamic> _loginResponse = jsonDecode(_loginRequest.body);
+
+  if(_loginResponse['statusCode'] == 200) {
+    userTokenUpdate(_loginResponse['userToken']);
+    return true;
+  }
+  else
+    return false;
 }
 
 Future<List<Music>> searchMusic(String q) async {
@@ -71,12 +89,8 @@ Future<List<Music>> searchMusic(String q) async {
     Uri.parse(url + 'searchMusic?search=$q')
   );
   final _searchMusicResponse = jsonDecode(_searchMusicRequest.body);
-  print(_searchMusicResponse);
 
   if(_searchMusicResponse['statusCode'] == 200) {
-    print('good');
-    Music _music = Music();
-
     for(var i in _searchMusicResponse['items']) {
       Music _music = Music(
         name: i['musicName'],
@@ -88,4 +102,42 @@ Future<List<Music>> searchMusic(String q) async {
   }
 
   return _musicList;
+}
+
+Future<List<Friend>> searchUsers(String q) async {
+  List<Friend>? _friendsList = [];
+  final User _user = await getUser();
+
+  final _searchFriendsRequest = await http.post(
+    Uri.parse(url + 'searchUser'),
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: json.encode({
+      "userToken": _user.token,
+      "userName": q
+    })
+  );
+  Map<String, dynamic> _searchFriendsResponse = jsonDecode(_searchFriendsRequest.body);
+  int _status = _searchFriendsResponse['statusCode'];
+  print(_searchFriendsResponse);
+
+  if(_status == 200) {
+    for(var i in _searchFriendsResponse['items']) {
+      Friend _friend = Friend(
+        name: i['name'],
+        nickName: i['nickName']
+      );
+
+      _friendsList.add(_friend);
+    }
+  }
+  else if(_status == 401) {
+    print('token expired');
+    bool _updateToken = await login(_user);
+    if(_updateToken)
+      searchUsers(q);
+  }
+
+  return _friendsList;
 }
