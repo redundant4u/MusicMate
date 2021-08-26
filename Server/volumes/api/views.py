@@ -5,6 +5,7 @@ from .models import User
 from .serializers import SongSeriallizer
 from rest_framework.parsers import JSONParser
 from .serializers import UserSeriallizer
+from .aescipher import AESCipher
 
 # Create your views here.
 @csrf_exempt
@@ -26,6 +27,19 @@ def idCheck(request):
             result['statusCode'] = 404
             result['status'] = 'Error'
             return JsonResponse(result, status = 404)
+
+@csrf_exempt
+def signup(request):
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        cipher = AESCipher()
+
+        q = User(name=data['name'], password = cipher.encrypt(data['password']), nickName = data['nickName'], encryptKey=cipher.key)
+        q.save()
+        result = dict()
+        result['statusCode'] = 404
+        result['status'] = 'Error'
+        return JsonResponse(result, status = 404)
 
 # @csrf_exempt
 # def searchUser(request):

@@ -16,7 +16,7 @@ class loginToken(models.Model):
 class User(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=30, null=False)
-    nick_name = models.CharField(max_length=30, null=False)
+    nickName = models.CharField(max_length=30, null=False)
     password = models.CharField(max_length=50, null=False)
     encryptKey = models.CharField(max_length=50, null=False, default="abn3@f3vsdr-3")
 
