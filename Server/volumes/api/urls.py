@@ -4,5 +4,6 @@ from api import views
 urlpatterns = [
     path('idDuplicateCheck', views.idCheck),
     path('signUp', views.signUp),
+    path('login',views.login),
     path('searchMusic', views.searchMusic)
 ]
