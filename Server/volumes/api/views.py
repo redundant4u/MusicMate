@@ -206,9 +206,23 @@ def addMusic(request):
             data = JSONParser().parse(request)
             if isValid(data['userToken']):
                 user = User.objects.get(token = data['userToken'])
-                song = Music.objects.get(name__contains = data['songId'])
+                try:
+                    musicToAdd = Music.objects.get(
+                        name = data['name'],
+                        artist = data['artist'],
+                        preview_url = data['preview_url'],
+                        albumart_url = data['albumart_url'],
+                        album_name = data['album_name'])
+                except:
+                    musicToAdd = Music(
+                        name = data['name'],
+                        artist = data['artist'],
+                        preview_url = data['preview_url'],
+                        albumart_url = data['albumart_url'],
+                        album_name = data['album_name'])
+                    musicToAdd.save()
                 
-                usersong = UserSong(user_id_id=user,song_id_id=song)
+                usersong = UserSong(user_id_id=user.id,song_id_id=musicToAdd.id)
                 usersong.save()
 
                 result = dict()
@@ -233,15 +247,14 @@ def addMusic(request):
         return JsonResponse(result, status = 404)
 
 
-# userToken, userId, songId
 @csrf_exempt
 def deleteMusic(request):
     if request.method == 'POST':
         try:
             data = JSONParser().parse(request)
             if isValid(data['userToken']):
-                user = User.objects.get(name__contains = data['userId'])
-                song = Music.objects.get(name__contains = data['songId'])
+                user = User.objects.get(token = data['userToken'])
+                song = Music.objects.get(id = data['musicId'])
                 
                 usersong = UserSong.objects.get(user_id_id=user,song_id_id=song)
                 usersong.delete()
