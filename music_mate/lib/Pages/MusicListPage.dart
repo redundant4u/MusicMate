@@ -16,6 +16,7 @@ class _MusicListPageState extends State<MusicListPage> {
 
   bool isPlaying = false;
   int playMusicID = 0;
+  int tabPageID = 0;
 
   @override
   void dispose() {
@@ -58,6 +59,7 @@ class _MusicListPageState extends State<MusicListPage> {
                             )
                           ),
                           onTap: () {
+                            setState(() { tabPageID = index; });
                             print(index);
                           }
                         );
@@ -73,78 +75,81 @@ class _MusicListPageState extends State<MusicListPage> {
           ],
         ),
 
-        Expanded(
-          child: FutureBuilder<List<Music>>(
-            future: getMusicList(),
-            builder: (context, snapshot) {
-              if(snapshot.hasData) {
-                return ListView.separated(
-                  shrinkWrap: true,
-                  separatorBuilder: (context, index) => Divider(color: Colors.black),
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(snapshot.data![index].name!),
-                      subtitle: Text(snapshot.data![index].artist!),
-                      trailing: Wrap(
-                        children: <Widget>[
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              setState(() {
-                                musicDelete(snapshot.data![index].id!);
-                              });
-                            }
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.play_arrow),
-                            onPressed: () {
-                              int musicID = snapshot.data![index].id!;
-                              String url = snapshot.data![index].url!;
-                              String msg = "";
+        if(tabPageID == 0)
+          Expanded(
+            child: FutureBuilder<List<Music>>(
+              future: getMusicList(),
+              builder: (context, snapshot) {
+                if(snapshot.hasData) {
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    separatorBuilder: (context, index) => Divider(color: Colors.black),
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(snapshot.data![index].name!),
+                        subtitle: Text(snapshot.data![index].artist!),
+                        trailing: Wrap(
+                          children: <Widget>[
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                setState(() {
+                                  musicDelete(snapshot.data![index].id!);
+                                });
+                              }
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.play_arrow),
+                              onPressed: () {
+                                int musicID = snapshot.data![index].id!;
+                                String url = snapshot.data![index].url!;
+                                String msg = "";
 
-                              print('url: ' + url);
+                                print('url: ' + url);
                           
-                              if(url == 'empty')
-                                msg = "미리듣기 음악이 없습니다!";
-                              else if(isPlaying && playMusicID == musicID) {
-                                _player.stop();
-                                isPlaying = false;
-                                msg = "듣기 취소";
-                              }
-                              else if(isPlaying && playMusicID != musicID) {
-                                _player.play(url);
-                                playMusicID = musicID;
-                                msg = "${snapshot.data![index].name} 듣는 중...";
-                              }
-                              else {
-                                _player.play(url);
-                                playMusicID = musicID;
-                                isPlaying = true;
-                                msg = "${snapshot.data![index].name} 듣는 중...";
-                              }
+                                if(url == 'empty')
+                                  msg = "미리듣기 음악이 없습니다!";
+                                else if(isPlaying && playMusicID == musicID) {
+                                  _player.stop();
+                                  isPlaying = false;
+                                  msg = "듣기 취소";
+                                }
+                                else if(isPlaying && playMusicID != musicID) {
+                                  _player.play(url);
+                                  playMusicID = musicID;
+                                  msg = "${snapshot.data![index].name} 듣는 중...";
+                                }
+                                else {
+                                  _player.play(url);
+                                  playMusicID = musicID;
+                                  isPlaying = true;
+                                  msg = "${snapshot.data![index].name} 듣는 중...";
+                                }
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(msg),
-                                  duration: const Duration(seconds: 1),
-                                )
-                              );
-                            }
-                          ),
-                        ]
-                      )
-                    );
-                  },
-                );
-              }
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(msg),
+                                    duration: const Duration(seconds: 1),
+                                  )
+                                );
+                              }
+                            ),
+                          ]
+                        )
+                      );
+                    },
+                  );
+                }
 
-              else {
-                return Center(child: CircularProgressIndicator());
+                else {
+                  return Center(child: CircularProgressIndicator());
+                }
               }
-            }
-          )
-        ),
+            )
+          ),
+        if(tabPageID != 0)
+          Text('HI')
       ]
     );
   }

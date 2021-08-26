@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:test/DB/Friend.dart';
 
 import '../../Utils/RegisterValidation.dart';
 import '../../DB/User.dart';
 import '../../Utils/Api.dart';
 import '../../Models/User.dart';
+import '../../Models/Friend.dart';
 import './MainPage.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -122,8 +124,13 @@ class _SignUpPageState extends State<SignUpPage> {
                 nickName: _controller[1].text,
                 password: _controller[2].text
               );
+              Friend _friend = Friend(
+                name: _controller[0].text,
+                nickName: _controller[1].text
+              );
 
               signUp(_user);
+              friendInsert(_friend);
               userInsert(_user);
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage()));
