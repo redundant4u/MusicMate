@@ -321,7 +321,7 @@ def getMusicList(request):
                 result['status'] = "success"
                 result['name'] = name
                 result['nickname'] = nickname
-                result['item'] = songList
+                result['items'] = songList
 
                 updateToken(data['userToken'])
                 return JsonResponse(result, status = 200)
