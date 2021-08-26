@@ -1,8 +1,8 @@
-from api.token import getToken
+from api.token import getToken,isValid,updateToken
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import User
+from .models import User,UserSong,Music
 from .serializers import SongSeriallizer
 from rest_framework.parsers import JSONParser
 from .serializers import UserSeriallizer
@@ -112,3 +112,120 @@ def searchMusic(request):
     }
 
     return JsonResponse(result,status=200)
+
+
+# userToken, userId, songId
+@csrf_exempt
+def addMusic(request):
+    if request.method == 'POST':
+        try:
+            data = JSONParser().parse(request)
+            if isValid(data['userToken']):
+                user = User.objects.get(name__contains = data['userId'])
+                song = Music.objects.get(name__contains = data['songId'])
+                
+                usersong = UserSong(user_id_id=user,song_id_id=song)
+                usersong.save()
+
+                result = dict()
+                result['statusCode'] = 200
+                result['status'] = "Success"
+                updateToken(data['userToken'])
+                return JsonResponse(result, status = 200)
+            else :
+                result = dict()
+                result['statusCode'] = 401
+                result['status'] = 'Token-expired'
+                return JsonResponse(result, status = 401)
+        except Exception as e:
+            result = dict()
+            result['statusCode'] = 404
+            result['status'] = 'error'
+            return JsonResponse(result, status = 404)
+    else:
+        result = dict()
+        result['statusCode'] = 404
+        result['status'] = 'error'
+        return JsonResponse(result, status = 404)
+
+
+# userToken, userId, songId
+@csrf_exempt
+def deleteMusic(request):
+    if request.method == 'POST':
+        try:
+            data = JSONParser().parse(request)
+            if isValid(data['userToken']):
+                user = User.objects.get(name__contains = data['userId'])
+                song = Music.objects.get(name__contains = data['songId'])
+                
+                usersong = UserSong.objects.get(user_id_id=user,song_id_id=song)
+                usersong.delete()
+
+                result = dict()
+                result['statusCode'] = 200
+                result['status'] = "Success"
+                updateToken(data['userToken'])
+                return JsonResponse(result, status = 200)
+            else :
+                result = dict()
+                result['statusCode'] = 401
+                result['status'] = 'Token-expired'
+                return JsonResponse(result, status = 401)
+        except Exception as e:
+            result = dict()
+            result['statusCode'] = 404
+            result['status'] = 'error'
+            return JsonResponse(result, status = 404)
+    else:
+        result = dict()
+        result['statusCode'] = 404
+        result['status'] = 'error'
+        return JsonResponse(result, status = 404)
+
+# userToken, userId
+@csrf_exempt
+def getMusicList(request):
+    if request.method == 'POST':
+        try:
+            data = JSONParser().parse(request)
+            if isValid(data['userToken']):
+                user = User.objects.filter(name__contains = data['userId'])
+                nickname = user.nickname
+                query_set = UserSong.objects.filter(name__contains = data['userId'])
+
+                songList = []
+                for song in query_set:
+                    info = dict()
+                    info['musicID'] = song.id
+                    info['musicName'] = song.title
+                    info['artist'] = song.artist
+                    info['musicPreview'] = song.preview_url
+                    info['albumArt'] = song.albumart_url
+                    info['albumName'] = song.album_name
+                    songList.append(info)
+
+                result = dict()
+                result['statusCode'] = 200
+                result['status'] = "success"
+                result['id'] = data['userId']
+                result['nickname'] = nickname
+                result['item'] = songList
+
+                updateToken(data['userToken'])
+                return JsonResponse(result, status = 200)
+            else :
+                result = dict()
+                result['statusCode'] = 401
+                result['status'] = 'Token-expired'
+                return JsonResponse(result, status = 401)
+        except Exception as e:
+            result = dict()
+            result['statusCode'] = 404
+            result['status'] = 'error'
+            return JsonResponse(result, status = 404)
+    else:
+        result = dict()
+        result['statusCode'] = 404
+        result['status'] = 'error'
+        return JsonResponse(result, status = 404)    

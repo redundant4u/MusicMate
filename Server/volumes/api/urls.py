@@ -5,5 +5,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('idDuplicateCheck',views.idCheck),
     path('signup',views.signUp),
-    path('searchMusic',views.searchMusic)
+    path('searchMusic',views.searchMusic),
+    path('addMusic',views.addMusic),
+    path('deleteMusic',views.deleteMusic),
+    path('getMusicList',views.getMusicList),
 ]
