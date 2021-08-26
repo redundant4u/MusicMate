@@ -7,6 +7,7 @@ from .serializers import SongSeriallizer
 from rest_framework.parsers import JSONParser
 from .serializers import UserSeriallizer
 from .aescipher import AESCipher
+from api.key import Config
 
 import base64
 import json
@@ -57,10 +58,6 @@ def signUp(request):
             result['statusCode'] = 404
             result['status'] = 'error'
             return JsonResponse(result, status = 404)
-            
-
-client_id = 'ee7b63f166a142a3b29f5f6c8095eb1d'
-client_secret = 'e83335f20e2e47e89d230ad1b7efe7bc'
 
 # SPOTIFY API TOKEN 받기
 def get_headers(client_id, client_secret):
@@ -82,7 +79,7 @@ def get_headers(client_id, client_secret):
 def searchMusic(request):
     # Spotify API 에서 검색 결과 받아오기
     endpoint = 'https://api.spotify.com/v1/search'
-    spotify_token = get_headers(client_id, client_secret)
+    spotify_token = get_headers(Config.CLIENT_KEY, Config.CLIENT_SECRET)
     params = {
         'q': request.GET['search'],
         'type': 'track',

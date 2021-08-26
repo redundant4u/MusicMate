@@ -9,3 +9,4 @@
 __pycache__
 
 Server/db_data
+Server/volumes/api/key.py

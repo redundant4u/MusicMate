@@ -8,7 +8,6 @@ class Music(models.Model):
     albumart_url = models.URLField(max_length=200)
     album_name = models.CharField(max_length=30, null=False)
 
-
 class User(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=30, null=False)
