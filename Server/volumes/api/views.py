@@ -2,10 +2,9 @@ from api.token import getToken, isValid, updateToken
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import User, Friend, Music, UserSong
-from .serializers import SongSeriallizer
 from rest_framework.parsers import JSONParser
-from .serializers import UserSeriallizer
+
+from .models import User, Friend, Music, UserSong
 from .aescipher import AESCipher
 from api.key import Config
 from datetime import timezone
@@ -14,7 +13,6 @@ import base64
 import json
 import requests
 import datetime
-import api.token
 
 @csrf_exempt
 def idCheck(request):

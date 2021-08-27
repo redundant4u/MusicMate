@@ -1,6 +1,7 @@
 import hashlib
-from datetime import datetime, timezone, timedelta
 import time
+
+from datetime import datetime, timezone, timedelta
 from .models import User
 
 def getToken(id : int):
@@ -25,7 +26,7 @@ def isValid(token : str):
         query_set = User.objects.get(token=token)
         if (query_set.expireTime - datetime.now(timezone.utc)).total_seconds() > 0 :
             return True
-        else :
+        else:
             return False
     except User.DoesNotExist as e:
         return False

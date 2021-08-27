@@ -1,5 +1,4 @@
 from django.db import models
-
 class Music(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=30, null=False)
@@ -7,7 +6,6 @@ class Music(models.Model):
     preview_url = models.URLField(max_length=200)
     albumart_url = models.URLField(max_length=200)
     album_name = models.CharField(max_length=30, null=False)
-
 class User(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=30, null=False)
@@ -23,7 +21,6 @@ class User(models.Model):
         through='UserSong',
         through_fields=('user_id', 'song_id',)
     )
-    
 class UserSong(models.Model):
     song_id = models.ForeignKey(Music, on_delete=models.CASCADE)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)

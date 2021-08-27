@@ -7,8 +7,6 @@ services:
     tty: true
     volumes:
       - ./volumes:/home/redundant/django
-    depends_on:
-      - db
     expose:
       - 8000
   web:
@@ -20,16 +18,5 @@ services:
     ports:
       - 80:80
       - 443:443
-    links:
-      - db
     expose:
       - 8000
-  db:
-    container_name: pg
-    image: postgres:12.4-alpine
-    volumes:
-      - ./db_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
